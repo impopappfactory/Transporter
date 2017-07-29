@@ -57,23 +57,23 @@ public enum EventError: ErrorType {
 }
 
 /// `StateMachine` is a state machine, obviously =).
-public class StateMachine<T:Hashable> {
+public class StateMachine<T: Hashable> {
     
     /// Initial state of state machine.
-    var initialState: State<T>
+    var initialState: TransporterState<T>
     
     /// Current state of state machine
-    public private(set) var currentState : State<T>
+    public private(set) var currentState : TransporterState<T>
     
     /// Available states in state machine
-    private lazy var availableStates : [State<T>] = []
+    private lazy var availableStates : [TransporterState<T>] = []
     
     /// Available events in state machine
-    private lazy var events : [Event<T>] = []
+    private lazy var events : [TransporterEvent<T>] = []
     
     /// Create `StateMachine` with initialState
     /// - Parameter initialState: initial state of state machine
-    required public init(initialState: State<T>)
+    required public init(initialState: TransporterState<T>)
     {
         self.initialState = initialState
         self.currentState = initialState
@@ -84,14 +84,14 @@ public class StateMachine<T:Hashable> {
     /// - Parameter initialStateValue: initial state value.
     convenience public init(initialStateValue: T)
     {
-        self.init(initialState:State(initialStateValue))
+        self.init(initialState: TransporterState(initialStateValue))
     }
     
     /// Create `StateMachine` with initialState and array of states
     /// - Parameter initialState: initial state.
     /// - Parameter states: Array of states of state machine
     /// - Discussion: Initial state can be omitted from list of states, because it will already be added from first parameter.
-    convenience public init(initialState: State<T>, states: [State<T>])
+    convenience public init(initialState: TransporterState<T>, states: [TransporterState<T>])
     {
         self.init(initialState: initialState)
         self.availableStates.appendContentsOf(states)
@@ -130,20 +130,20 @@ public class StateMachine<T:Hashable> {
     
     /// Add state to array of available states
     /// - Parameter state: state to add
-    public func addState(state: State<T>) {
+    public func addState(state: TransporterState<T>) {
         availableStates.append(state)
     }
     
     /// Add array of states
     /// - Parameter states: states array.
-    public func addStates(states: [State<T>]) {
+    public func addStates(states: [TransporterState<T>]) {
         availableStates.appendContentsOf(states)
     }
     
     /// Add event to `StateMachine`. This method checks, whether source states and destination state of event are present in `StateMachine`. If not - event will not be added, and this method will throw.
     /// - Parameter event: event to add.
     /// - Throws: `EventError` if event cannot be added.
-    public func addEvent(event: Event<T>) throws {
+    public func addEvent(event: TransporterEvent<T>) throws {
         if event.sourceValues.isEmpty
         {
             throw EventError.NoSourceValue
@@ -165,7 +165,7 @@ public class StateMachine<T:Hashable> {
     
     /// Add events to `StateMachine`. This method checks, whether source states and destination state of event are present in `StateMachine`. If not - event will not be added.
     /// - Parameter events: events to add to `StateMachine`.
-    public func addEvents(events: [Event<T>]) {
+    public func addEvents(events: [TransporterEvent<T>]) {
         for event in events
         {
             guard let _ = try? self.addEvent(event) else {
@@ -187,7 +187,7 @@ public class StateMachine<T:Hashable> {
      - parameter event: event to fire
      - returns: `Transition` object.
     */
-    public func fireEvent(event: Event<T>) -> Transition<T> {
+    public func fireEvent(event: TransporterEvent<T>) -> Transition<T> {
         return _fireEventNamed(event.name)
     }
     
@@ -201,7 +201,7 @@ public class StateMachine<T:Hashable> {
     /// Returns, whether event can be fired (event is present on state machine, current state is in list of available states)
     /// - Parameter event: Event
     /// - Returns: whether event can be fired
-    public func canFireEvent(event: Event<T>) -> Bool {
+    public func canFireEvent(event: TransporterEvent<T>) -> Bool {
         let possibleTransition = possibleTransitionForEvent(event)
         if case .Error(_) = possibleTransition {
             return false
@@ -228,12 +228,12 @@ public class StateMachine<T:Hashable> {
      - Parameter event: event that could be fired.
      - Returns: `Transition` object.
      */
-    public func possibleTransitionForEvent(event: Event<T>) -> Transition<T> {
+    public func possibleTransitionForEvent(event: TransporterEvent<T>) -> Transition<T> {
         if !events.contains(event) {
             return .Error(.UnknownEvent)
         }
         if event.sourceValues.contains(currentState.value) {
-            return Transition.Success(sourceState: currentState, destinationState: State(event.destinationValue))
+            return Transition.Success(sourceState: currentState, destinationState: TransporterState(event.destinationValue))
         }
         return .Error(.WrongSourceState)
     }
@@ -244,7 +244,7 @@ public class StateMachine<T:Hashable> {
      - Parameter value: value of state to search for
      - Returns: state, if found.
      */
-    public func stateWithValue(value: T) -> State<T>? {
+    public func stateWithValue(value: T) -> TransporterState<T>? {
         return availableStates.filter { (element) -> Bool in
             return element.value == value
         }.first
@@ -253,7 +253,7 @@ public class StateMachine<T:Hashable> {
     /// Retrieve event with specific name
     /// - Parameter name: Name of the event
     /// - Returns: event, if found.
-    public func eventWithName(name: String) -> Event<T>? {
+    public func eventWithName(name: String) -> TransporterEvent<T>? {
         return events.filter { (element) -> Bool in
             return element.name == name
         }.first

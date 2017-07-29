@@ -26,22 +26,22 @@
 /**
     `State` class encapsulates state with some value, and closure-based callbacks to fire when state machine enters or exits state.
 */
-public class State <T:Hashable>  {
+public class TransporterState <T: Hashable>  {
     
     /// Value of state
     public let value : T
     
     /// Closure, that will be executed, before state machine enters this state
-    public var willEnterState: ( (enteringState : State<T> ) -> Void)?
+    public var willEnterState: ( (enteringState : TransporterState<T> ) -> Void)?
     
     /// Closure, that will be executed, after state machine enters this state
-    public var didEnterState:  ( (enteringState : State<T> ) -> Void)?
+    public var didEnterState:  ( (enteringState : TransporterState<T> ) -> Void)?
     
     /// Closure, that will be executed before state machine will switch from current state to another state.
-    public var willExitState:  ( (exitingState  : State<T> ) -> Void)?
+    public var willExitState:  ( (exitingState  : TransporterState<T> ) -> Void)?
     
     /// Closure, that will be executed after state machine switched from current state to another state.
-    public var didExitState:   ( (exitingState  : State<T> ) -> Void)?
+    public var didExitState:   ( (exitingState  : TransporterState<T> ) -> Void)?
     
     /// Create state with value
     /// - Parameter value: value of state

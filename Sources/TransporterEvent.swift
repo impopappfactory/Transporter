@@ -26,7 +26,7 @@
 /**
     Instance of enum is returned from fireEvent method on StateMachine. Use it to determine, whether transition was successful.
 */
-public enum Transition<T:Hashable> {
+public enum Transition<T: Hashable> {
     
     /**
         Returns whether transition was successful
@@ -44,7 +44,7 @@ public enum Transition<T:Hashable> {
     /**
         Success case with source state, from which transition happened, and destination state, to which state machine switched
     */
-    case Success(sourceState: State<T>, destinationState: State<T>)
+    case Success(sourceState: TransporterState<T>, destinationState: TransporterState<T>)
     
     /**
         Error case, containing error. Error domain and status codes are described in Errors struct.
@@ -55,7 +55,7 @@ public enum Transition<T:Hashable> {
 /**
     `Event` class encapsulates some event with array of possible source states and one destination state, to which state machine should transition, when this event fires.
 */
-public class Event<T:Hashable> {
+public class TransporterEvent<T: Hashable> {
     
     /// Name of event
     public let name : String
@@ -67,13 +67,13 @@ public class Event<T:Hashable> {
     public let destinationValue: T
     
     ///  If this closure return value is false, event will not be fired
-    public var shouldFireEvent: ( (event : Event) -> Bool )?
+    public var shouldFireEvent: ( (event : TransporterEvent) -> Bool )?
     
     /// This closure will be executed before event is fired.
-    public var willFireEvent:   ( (event : Event) -> Void )?
+    public var willFireEvent:   ( (event : TransporterEvent) -> Void )?
     
     /// This closure will be executed after event was fired.
-    public var didFireEvent:    ( (event : Event) -> Void )?
+    public var didFireEvent:    ( (event : TransporterEvent) -> Void )?
     
     /// Initializer for Event.
     /// - Parameter name: name of the event
@@ -86,9 +86,9 @@ public class Event<T:Hashable> {
     }
 }
 
-extension Event: Equatable {}
+extension TransporterEvent: Equatable {}
 
 /// Returns true, if events have the same name
-public func ==<T>(lhs:Event<T>,rhs:Event<T>) -> Bool {
+public func ==<T>(lhs: TransporterEvent<T>, rhs: TransporterEvent<T>) -> Bool {
     return lhs.name == rhs.name
 }
