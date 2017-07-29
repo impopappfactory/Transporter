@@ -12,9 +12,9 @@ import XCTest
 class StateMachineConstructorsTests: XCTestCase {
 
     func testStateConvenienceConstructor() {
-        let state = State(3)
-        let state2 = State(5)
-        let state3 = State(7)
+        let state = TransporterState(3)
+        let state2 = TransporterState(5)
+        let state3 = TransporterState(7)
         
         let machine = StateMachine(initialState: state, states: [state2,state3])
         

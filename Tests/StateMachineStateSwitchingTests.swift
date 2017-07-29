@@ -15,7 +15,7 @@ class StateMachineStateSwitchingTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        let initial = State(0)
+        let initial = TransporterState(0)
         machine = StateMachine(initialState: initial)
     }
     
@@ -34,7 +34,7 @@ class StateMachineStateSwitchingTests: XCTestCase {
     }
     
     func testWillEnterStateBlock() {
-        let state = State(3)
+        let state = TransporterState(3)
         var blockCalled = false
         state.willEnterState = { enteringState in
             XCTAssert(enteringState.value == state.value)
@@ -47,7 +47,7 @@ class StateMachineStateSwitchingTests: XCTestCase {
     }
     
     func testDidEnterStateBlock() {
-        let state = State(4)
+        let state = TransporterState(4)
         var blockCalled = false
         state.didEnterState = { enteringState in
             XCTAssert(enteringState.value == state.value)
@@ -60,7 +60,7 @@ class StateMachineStateSwitchingTests: XCTestCase {
     }
     
     func testWillExitStateBlock() {
-        let state = State(3)
+        let state = TransporterState(3)
         var blockCalled = false
         state.willExitState = { exitingState in
             XCTAssert(exitingState.value == state.value)
@@ -73,7 +73,7 @@ class StateMachineStateSwitchingTests: XCTestCase {
     }
     
     func testDidExitStateBlock() {
-        let state = State(3)
+        let state = TransporterState(3)
         var blockCalled = false
         state.didExitState = { exitingState in
             XCTAssert(exitingState.value == state.value)
@@ -87,13 +87,13 @@ class StateMachineStateSwitchingTests: XCTestCase {
     
     func testShouldFireEvent()
     {
-        let event = Event(name: "Foo", sourceValues: [0], destinationValue: 1)
+        let event = TransporterEvent(name: "Foo", sourceValues: [0], destinationValue: 1)
         var blockCalled = false
         event.shouldFireEvent = { event -> Bool in
             blockCalled = true
             return true
         }
-        machine.addState(State(1))
+        machine.addState(TransporterState(1))
         _ = try? machine.addEvent(event)
         machine.fireEvent(event)
         XCTAssert(blockCalled)
@@ -101,9 +101,9 @@ class StateMachineStateSwitchingTests: XCTestCase {
     
     func testAddValidEvents()
     {
-        let event = Event(name: "Foo", sourceValues: [0], destinationValue: 1)
-        let event2 = Event(name: "Bar", sourceValues: [0], destinationValue: 2)
-        machine.addState(State(1))
+        let event = TransporterEvent(name: "Foo", sourceValues: [0], destinationValue: 1)
+        let event2 = TransporterEvent(name: "Bar", sourceValues: [0], destinationValue: 2)
+        machine.addState(TransporterState(1))
         machine.addEvents([event,event2])
         
         XCTAssert(machine.canFireEvent("Foo"))

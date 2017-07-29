@@ -12,29 +12,29 @@ import Transporter
 class StateTests: XCTestCase {
 
     func testNumberEqualStates() {
-        let state = State(6)
-        let state2 = State(5+1)
+        let state = TransporterState(6)
+        let state2 = TransporterState(5+1)
         
         XCTAssert(state.value == state2.value)
     }
     
     func testNumberDifferentState() {
-        let state = State(4)
-        let state2 = State(3)
+        let state = TransporterState(4)
+        let state2 = TransporterState(3)
         
         XCTAssertFalse(state.value == state2.value)
     }
 
     func testDifferentStrings() {
-        let state = State("Foo")
-        let state2 = State("Bar")
+        let state = TransporterState("Foo")
+        let state2 = TransporterState("Bar")
         
         XCTAssertFalse(state.value == state2.value)
     }
     
     func testIdenticalStrings() {
-        let state = State("omg")
-        let state2 = State("omg")
+        let state = TransporterState("omg")
+        let state2 = TransporterState("omg")
         
         XCTAssert(state.value == state2.value)
     }

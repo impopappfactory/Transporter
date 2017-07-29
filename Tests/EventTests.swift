@@ -27,21 +27,21 @@ class NumberTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        let state = State(0)
+        let state = TransporterState(0)
         machine = StateMachine(initialState: state)
     }
     
     func testEventWithNoMatchingStates() {
-        let event = Event(name: "", sourceValues: [1,2], destinationValue: 3)
+        let event = TransporterEvent(name: "", sourceValues: [1,2], destinationValue: 3)
         XCTAssertThrows(EventError.NoSourceValue) {
             try self.machine.addEvent(event)
         }
     }
     
     func testEventWithNoSourceState() {
-        machine.addState(State(2))
+        machine.addState(TransporterState(2))
         
-        let event = Event(name: "", sourceValues: [], destinationValue: 2)
+        let event = TransporterEvent(name: "", sourceValues: [], destinationValue: 2)
         
         XCTAssertThrows(EventError.NoSourceValue) {
             try self.machine.addEvent(event)
@@ -49,10 +49,10 @@ class NumberTests: XCTestCase {
     }
     
     func testFiringEvent() {
-        let state = State(3)
+        let state = TransporterState(3)
         
         machine.addState(state)
-        let event = Event(name: "3", sourceValues: [0], destinationValue: 3)
+        let event = TransporterEvent(name: "3", sourceValues: [0], destinationValue: 3)
         guard let _ = try? machine.addEvent(event) else {
             XCTFail()
             return
@@ -63,7 +63,7 @@ class NumberTests: XCTestCase {
     }
     
     func testAddingEventWithWrongDestinationState() {
-        let event = Event(name: "3", sourceValues: [0], destinationValue: 2)
+        let event = TransporterEvent(name: "3", sourceValues: [0], destinationValue: 2)
         XCTAssertThrows(EventError.NoDestinationValue) {
             try self.machine.addEvent(event)
         }
@@ -76,14 +76,14 @@ class StringTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        let state = State("Initial")
-        let passedState = State("Passed")
+        let state = TransporterState("Initial")
+        let passedState = TransporterState("Passed")
         machine = StateMachine(initialState: state)
         machine.addState(passedState)
     }
     
     func testCanFireEvent() {
-        let event = Event(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
+        let event = TransporterEvent(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
         
         XCTAssertFalse(machine.canFireEvent("Pass"))
         XCTAssertFalse(machine.canFireEvent(event))
@@ -96,7 +96,7 @@ class StringTests: XCTestCase {
     }
     
     func testShouldFireEventBlock() {
-        let event = Event(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
+        let event = TransporterEvent(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
         event.shouldFireEvent = { _ in
             return false
         }
@@ -113,8 +113,8 @@ class StringTests: XCTestCase {
     }
     
     func testSourceStateUnavailable() {
-        let state = State("Completed")
-        let event = Event(name: "Completed", sourceValues: ["Passed"], destinationValue: "Completed")
+        let state = TransporterState("Completed")
+        let event = TransporterEvent(name: "Completed", sourceValues: ["Passed"], destinationValue: "Completed")
         machine.addState(state)
         _ = try? machine.addEvent(event)
         
@@ -129,7 +129,7 @@ class StringTests: XCTestCase {
     }
     
     func testStatePassed() {
-        let event = Event(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
+        let event = TransporterEvent(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
         _ = try? machine.addEvent(event)
         
         let transition = machine.fireEvent("Pass")
@@ -144,7 +144,7 @@ class StringTests: XCTestCase {
     
     func testTransitionSuccessful()
     {
-        let event = Event(name: "Pass", sourceValues: ["Initial"],destinationValue: "Passed")
+        let event = TransporterEvent(name: "Pass", sourceValues: ["Initial"],destinationValue: "Passed")
         _ = try? machine.addEvent(event)
         let transition = machine.fireEvent("Pass")
         
@@ -153,7 +153,7 @@ class StringTests: XCTestCase {
     
     func testTransitionFailed()
     {
-        let event = Event(name: "Pass", sourceValues: ["Initial"],destinationValue: "Passed")
+        let event = TransporterEvent(name: "Pass", sourceValues: ["Initial"],destinationValue: "Passed")
         _ = try? machine.addEvent(event)
         let transition = machine.fireEvent("Foo")
         
@@ -172,7 +172,7 @@ class StringTests: XCTestCase {
     }
     
     func testWillFireEventBlock() {
-        let event = Event(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
+        let event = TransporterEvent(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
         var foo = 5
         event.willFireEvent = { _ in
             XCTAssert(self.machine.isInState("Initial"))
@@ -185,7 +185,7 @@ class StringTests: XCTestCase {
     }
     
     func testDidFireEventBlock() {
-        let event = Event(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
+        let event = TransporterEvent(name: "Pass", sourceValues: ["Initial"], destinationValue: "Passed")
         var foo = 5
         event.didFireEvent = { _ in
             XCTAssert(self.machine.isInState("Passed"))

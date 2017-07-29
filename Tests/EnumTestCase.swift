@@ -27,11 +27,11 @@ class EnumTestCase: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        let initialState = State(StateEnum.Start)
+        let initialState = TransporterState(StateEnum.Start)
         machine = StateMachine(initialState: initialState)
         
-        let progressState = State(StateEnum.Progress)
-        let finishState = State(StateEnum.Finish)
+        let progressState = TransporterState(StateEnum.Progress)
+        let finishState = TransporterState(StateEnum.Finish)
         
         machine.addStates([progressState,finishState])
     }
@@ -48,7 +48,7 @@ class EnumTestCase: XCTestCase {
     }
     
     func testFiringEvent() {
-        let event = Event(name: EnumEvents.MakeProgress, sourceValues: [StateEnum.Start], destinationValue: StateEnum.Progress)
+        let event = TransporterEvent(name: EnumEvents.MakeProgress, sourceValues: [StateEnum.Start], destinationValue: StateEnum.Progress)
         
         _ = try? machine.addEvent(event)
         machine.fireEvent(EnumEvents.MakeProgress)

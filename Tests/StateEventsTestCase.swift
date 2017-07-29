@@ -11,7 +11,7 @@ import Transporter
 
 class StateEventsTestCase: XCTestCase {
 
-    let initial = State(4)
+    let initial = TransporterState(4)
     var machine : StateMachine<Int>!
     
     override func setUp() {
@@ -21,7 +21,7 @@ class StateEventsTestCase: XCTestCase {
     }
 
     func testWillEnterBlock() {
-        let state = State(5)
+        let state = TransporterState(5)
         var x = 5
         state.willEnterState = { _ in
             x = 6
@@ -34,7 +34,7 @@ class StateEventsTestCase: XCTestCase {
     }
     
     func testDidEnterBlock() {
-        let state = State(3)
+        let state = TransporterState(3)
         var x = 1
         state.didEnterState = { _ in x=2 }
         

@@ -11,7 +11,7 @@ import Transporter
 
 class AddingStatesTestCase: XCTestCase {
 
-    let initial = State(4)
+    let initial = TransporterState(4)
     var machine : StateMachine<Int>!
     
     override func setUp() {
@@ -21,20 +21,20 @@ class AddingStatesTestCase: XCTestCase {
     }
 
     func testAddState() {
-        machine.addState(State(3))
+        machine.addState(TransporterState(3))
         
         XCTAssert(machine.isStateAvailable(3))
     }
     
     func testAddStates() {
-        machine.addStates([State(6),State(7)])
+        machine.addStates([TransporterState(6),TransporterState(7)])
         
         XCTAssert(machine.isStateAvailable(6))
         XCTAssert(machine.isStateAvailable(7))
     }
     
     func testStateAvailable() {
-        machine.addState(State(5))
+        machine.addState(TransporterState(5))
         
         let state = machine.stateWithValue(5)
         
