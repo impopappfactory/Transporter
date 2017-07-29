@@ -287,23 +287,21 @@ private extension StateMachine {
             let possibleTransition = possibleTransitionForEvent(event)
             switch possibleTransition {
             case .Success(let sourceState, let destinationState):
-                if let shouldBlock = event.shouldFireEvent {
-                    if shouldBlock(event: event) {
-                        event.willFireEvent?(event: event)
-                        activateState(event.destinationValue)
-                        event.didFireEvent?(event: event)
-                        return .Success(sourceState: sourceState, destinationState: destinationState)
-                    }
-                    else {
-                        return .Error(.TransitionDeclined)
-                    }
-                }
-                else {
-                    let sourceState = self.currentState
+                let processState = { () -> Transition<T> in
                     event.willFireEvent?(event: event)
-                    activateState(event.destinationValue)
+                    self.activateState(event.destinationValue)
                     event.didFireEvent?(event: event)
                     return .Success(sourceState: sourceState, destinationState: destinationState)
+                }
+
+                if let shouldBlock = event.shouldFireEvent {
+                    if shouldBlock(event: event) {
+                        return processState()
+                    } else {
+                        return .Error(.TransitionDeclined)
+                    }
+                } else {
+                    return processState()
                 }
             default :
                 return possibleTransition
