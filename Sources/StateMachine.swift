@@ -66,7 +66,7 @@ public class StateMachine<T: Hashable> {
     public private(set) var currentState : TransporterState<T>
     
     /// Available states in state machine
-    private lazy var availableStates : [TransporterState<T>] = []
+    public private(set) lazy var availableStates : [TransporterState<T>] = []
     
     /// Available events in state machine
     private lazy var events : [TransporterEvent<T>] = []
@@ -77,7 +77,7 @@ public class StateMachine<T: Hashable> {
     {
         self.initialState = initialState
         self.currentState = initialState
-        availableStates.append(initialState)
+        addState(initialState)
     }
     
     /// Create `StateMachine` with initialState value
@@ -94,7 +94,7 @@ public class StateMachine<T: Hashable> {
     convenience public init(initialState: TransporterState<T>, states: [TransporterState<T>])
     {
         self.init(initialState: initialState)
-        self.availableStates.appendContentsOf(states)
+        addStates(states)
     }
     
     /// Activate state, if it's present in `StateMachine`. This method is not tied to events, present in StateMachine.
@@ -131,13 +131,14 @@ public class StateMachine<T: Hashable> {
     /// Add state to array of available states
     /// - Parameter state: state to add
     public func addState(state: TransporterState<T>) {
-        availableStates.append(state)
+        addStates([state])
     }
     
     /// Add array of states
     /// - Parameter states: states array.
     public func addStates(states: [TransporterState<T>]) {
-        availableStates.appendContentsOf(states)
+        let availableStateNames = Set(availableStates.map { $0.value })
+        availableStates.appendContentsOf(states.filter { !availableStateNames.contains($0.value) })
     }
     
     /// Add event to `StateMachine`. This method checks, whether source states and destination state of event are present in `StateMachine`. If not - event will not be added, and this method will throw.
